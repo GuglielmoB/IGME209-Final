@@ -124,6 +124,7 @@ void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Ver
 				//Add node_successor to the OPEN list
 				neighbor.lowestCost = cost;
 				OPEN.put(neighbor, cost + heuristic(neighbor, goal));
+				current = neighbor;
 			}
 		}
 		//Add node_current to the CLOSED list

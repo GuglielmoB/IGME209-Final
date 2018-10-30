@@ -68,11 +68,9 @@ void Graph::a_star_search(Graph graph, Vertex start, Vertex goal, map<Vertex, ve
 			//if node_successor is on the OPEN list but the existing one is as good
 			//or better then discard this successor and continue
 
-			if (oFound > 0)
+			if (oFound > 0 && cost < G(neighbor))
 			{
-				Node existing_node = OPEN.NodeAt(oFound);
-				if (existing_node.CompareTo(node_current) <= 0)
-					continue;
+				//remove from open
 			}
 
 
@@ -82,20 +80,17 @@ void Graph::a_star_search(Graph graph, Vertex start, Vertex goal, map<Vertex, ve
 			//if node_successor is on the CLOSED list
 			//but the existing one is as good
 			//or better then discard this successor and continue;
-			if (cFound)
+			if (cFound && cost < G(neighbor))
 			{
-				Vertex existing_node = CLOSED.;
-				if (existing_node.CompareTo(node_current) <= 0)
-					continue;
+				// remove from closed
 			}
 
-			//Remove occurences of node_successor from OPEN and CLOSED
-			if (oFound != -1)
-				OPEN.RemoveAt(oFound);
-			if (cFound != -1)
-				CLOSED.RemoveAt(cFound);
-			//Add node_successor to the OPEN list
-			OPEN.push(node_successor);
+			if (!oFound && !cFound) {
+			
+				//Add node_successor to the OPEN list
+				OPEN.push(node_successor);
+			}
+			
 
 		}
 		//Add node_current to the CLOSED list

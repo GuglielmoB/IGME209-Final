@@ -2,11 +2,10 @@
 class Vertex
 {
 public:
-	int h;
 	int x;
 	int y;
+	int h;
 	int lowestCost;
-	bool visited;
 	Vertex();
 	~Vertex();
 };

@@ -12,12 +12,10 @@ public:
 	map<Vertex, vector<Vertex>> adjList;
 	Graph();
 	~Graph();
+
+
 	vector<Vertex> neighbors(Vertex id, map<Vertex, vector<Vertex>> adjList);
-	double heuristic(Vertex a, Vertex b);
-	void a_star_search
-	(Graph graph,
-		Vertex start,
-		Vertex goal,
-		map<Vertex, vector<Vertex>> adjList);
+	float heuristic(Vertex a, Vertex b);
+	void aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Vertex>> adjList);
 };
 

@@ -2,17 +2,12 @@
 class Vertex
 {
 public:
-	float g;
-	float h;
+	int h;
 	int x;
 	int y;
-	int goalX;
-	int goalY;
-	int parentX;
-	int parentY;
-	int gCost;
+	int lowestCost;
+	bool visited;
 	Vertex();
-	Vertex(Vertex parent, Vertex goal, int gCost, int x, int y);
 	~Vertex();
 };
 

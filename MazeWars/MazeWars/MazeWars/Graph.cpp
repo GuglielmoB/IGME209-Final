@@ -42,43 +42,28 @@ void Graph::a_star_search(Graph graph, Vertex start, Vertex goal, map<Vertex, ve
 		Vertex node_current = OPEN.top;
 		OPEN.pop();
 
+		CLOSED.push_back(node_current);
+
 		//if node_current is the same state as node_goal we
 		//have found the solution;
 		//break from the while loop;
 		if (node_current.x == goal.x && node_current.y == goal.y)
 		{
-			goal.parentX = node_current.parentX;
-			goal.parentY = node_current.parentY;
 			break;
 		}
 
 		//Generate each state node_successor that can come after node_current
-		vector<Vertex> successors = neighbors(node_current, adjList);
+		vector<Vertex> neighbors = graph.neighbors(node_current, adjList);
 
 		//for each node_successor or node_current
-		for (Vertex node_successor : successors)
+		for (Vertex neighbor : neighbors)
 		{
 			//Set the cost of node_successor to be the cost of node_current plus
 			//the cost to get to node_successor from node_current
 			//--> already set while we were getting successors
 
 			//find node_successor on the OPEN list
-			vector<Vertex> successors;
-
-			for (int xd = -1; xd <= 1; xd++)
-			{
-				for (int yd = -1; yd <= 1; yd++)
-				{
-					if (Map.getMap(x + xd, y + yd) != -1)
-					{
-						Vertex n = new Vertex(this, this._goalNode, Map.getMap(x + xd, y + yd), x + xd, y + yd);
-						if (!n.isMatch(this.parentNode) && !n.isMatch(this))
-							successors.Add(n);
-
-					}
-				}
-			}
-			return successors;
+			vector<int>::iterator it;
 
 			//if node_successor is on the OPEN list but the existing one is as good
 			//or better then discard this successor and continue
@@ -92,14 +77,14 @@ void Graph::a_star_search(Graph graph, Vertex start, Vertex goal, map<Vertex, ve
 
 
 			//find node_successor on the CLOSED list
-			int cFound = CLOSED.IndexOf(node_successor);
+			bool cFound = (std::find(CLOSED.begin(), CLOSED.end(), neighbor) != CLOSED.end());
 
 			//if node_successor is on the CLOSED list
 			//but the existing one is as good
 			//or better then discard this successor and continue;
-			if (cFound > 0)
+			if (cFound)
 			{
-				Node existing_node = CLOSED.NodeAt(cFound);
+				Vertex existing_node = CLOSED.;
 				if (existing_node.CompareTo(node_current) <= 0)
 					continue;
 			}
@@ -114,5 +99,5 @@ void Graph::a_star_search(Graph graph, Vertex start, Vertex goal, map<Vertex, ve
 
 		}
 		//Add node_current to the CLOSED list
-		CLOSED.push(node_current);
+		CLOSED.push_back(node_current);
 }

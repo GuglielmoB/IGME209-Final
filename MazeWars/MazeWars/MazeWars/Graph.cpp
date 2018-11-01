@@ -3,6 +3,7 @@
 #include <iostream> 
 #include <list>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 template<typename T, typename priority_t>
@@ -25,15 +26,14 @@ struct PriorityQueue {
 		return best_item;
 	}
 
-	const_iterator find(const T&val) const
-	{
-		auto first = this->c.cbegin();
-		auto last = this->c.cend();
-		while (first != last) {
-			if (*first == val) return first;
-			++first;
+	bool find(const T& value) {
+		auto it = std::find(this->c.begin(), this->c.end(), value);
+		if (it != this->c.end()) {
+			return true;
 		}
-		return last;
+		else {
+			return false;
+		}
 	}
 
 	bool remove(const T& value) {
@@ -53,24 +53,82 @@ Graph::Graph()
 {
 }
 
+Graph::Graph(vector<Vertex> vert, int ** adj)
+{
+	vertices = vert;
+	adjList = adj;
+}
+
 
 Graph::~Graph()
 {
 }
 
-vector<Vertex> Graph::neighbors(Vertex id, map<Vertex, vector<Vertex>> adjList)
+vector<Vertex> Graph::neighbors(Vertex id, vector<Vertex> vertices, int** adjList)
 {
-	return adjList[id];
+	vector<Vertex> successors;
+	Vertex v;
+	if (adjList[id.x + 1][id.y] == 1)
+	{
+		int x = id.x + 1;
+		int y = id.y;
+		auto it = find_if(vertices.begin(), vertices.end(), [&x, &y](const Vertex& obj) {return obj.x == x + 1 && obj.y == y; });
+
+		if (it != vertices.end())
+		{
+			auto index = std::distance(vertices.begin(), it);
+			successors.push_back(vertices[index]);
+		}
+	}
+		
+	if (adjList[id.x - 1][id.y] == 1)
+	{
+		int x = id.x - 1;
+		int y = id.y;
+		auto it = find_if(vertices.begin(), vertices.end(), [&x, &y](const Vertex& obj) {return obj.x == x + 1 && obj.y == y; });
+
+		if (it != vertices.end())
+		{
+			auto index = std::distance(vertices.begin(), it);
+			successors.push_back(vertices[index]);
+		}
+	}
+
+	if (adjList[id.x][id.y + 1] == 1)
+	{
+		int x = id.x;
+		int y = id.y + 1;
+		auto it = find_if(vertices.begin(), vertices.end(), [&x, &y](const Vertex& obj) {return obj.x == x + 1 && obj.y == y; });
+
+		if (it != vertices.end())
+		{
+			auto index = std::distance(vertices.begin(), it);
+			successors.push_back(vertices[index]);
+		}
+	}
+	
+	if (adjList[id.x][id.y - 1] == 1)
+	{
+		int x = id.x;
+		int y = id.y - 1;
+		auto it = find_if(vertices.begin(), vertices.end(), [&x, &y](const Vertex& obj) {return obj.x == x + 1 && obj.y == y; });
+
+		if (it != vertices.end())
+		{
+			auto index = std::distance(vertices.begin(), it);
+			successors.push_back(vertices[index]);
+		}
+	}
+
+	return successors;
 }
 
-float Graph::heuristic(Vertex a, Vertex b) {
+int Graph::heuristic(Vertex a, Vertex b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
-void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Vertex>> adjList)
+void Graph::aStar(Graph graph, Vertex start, Vertex goal, vector<Vertex> vertices, int** adjList, vector<Vertex> path)
 {
-	vector<Vertex> SolutionPathList;
-
 	//Create OPEN and CLOSED list
 	PriorityQueue<Vertex, double> OPEN;
 	list<Vertex> CLOSED;
@@ -80,7 +138,7 @@ void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Ver
 	OPEN.put(start, start.h);
 
 	//while the OPEN list is not empty
-	while (OPEN.elements.size > 0)
+	while (OPEN.elements.size() > 0)
 	{
 		//Get the vertex off the open list
 		//with the lowest f and call it current
@@ -89,18 +147,21 @@ void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Ver
 		// IF IS GOAL
 		if (current.x == goal.x && current.y == goal.y)
 		{
-			// MAKE PATH FROM GOAL TO START
-			break;
+			Vertex pathMaker = goal;
+			while (pathMaker.parent != NULL) {
+				path.insert(path.begin(), pathMaker);
+				pathMaker = *pathMaker.parent;
+			}
 		}
 
 		//Generate each state node_successor that can come after node_current
-		vector<Vertex> neighbors = graph.neighbors(current, adjList);
+		vector<Vertex> neighbors = graph.neighbors(current, vertices, adjList);
 
 		//for each node_successor or node_current
 		for (Vertex neighbor : neighbors)
 		{
 			//Cost = G(CURRENT) + cost of CURRENT to neighbor
-			float cost = heuristic(start, current) + heuristic(current, neighbor);
+			int cost = heuristic(start, current) + heuristic(current, neighbor);
 
 			//find node_successor on the OPEN list
 			bool oFound = OPEN.find(neighbor);
@@ -112,7 +173,17 @@ void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Ver
 			}
 
 			//find node_successor on the CLOSED list
-			bool cFound = (std::find(CLOSED.begin(), CLOSED.end(), neighbor) != CLOSED.end());
+			int neighX = neighbor.x;
+			int neighY = neighbor.y;
+			// bool cFound = (std::find(CLOSED.begin(), CLOSED.end(), neighbor) != CLOSED.end());
+			bool cFound;
+			auto it = find_if(CLOSED.begin(), CLOSED.end(), [&neighX, &neighY](const Vertex& obj) {return obj.x == neighX && obj.y == neighY; });
+			if (it != CLOSED.end()) {
+				cFound = true;
+			}
+			else {
+				cFound = false;
+			}
 
 			if (cFound && cost < heuristic(start, neighbor))
 			{
@@ -124,6 +195,7 @@ void Graph::aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Ver
 				//Add node_successor to the OPEN list
 				neighbor.lowestCost = cost;
 				OPEN.put(neighbor, cost + heuristic(neighbor, goal));
+				neighbor.parent = &current;
 				current = neighbor;
 			}
 		}

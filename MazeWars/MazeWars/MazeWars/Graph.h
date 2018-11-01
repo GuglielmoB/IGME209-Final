@@ -9,13 +9,15 @@ class Graph
 {
 public:
 	vector<Vertex> vertices;
-	map<Vertex, vector<Vertex>> adjList;
+	int** adjList;
+	vector<Vertex> path;
 	Graph();
+	Graph(vector<Vertex> vertices, int** adjList);
 	~Graph();
 
 
-	vector<Vertex> neighbors(Vertex id, map<Vertex, vector<Vertex>> adjList);
-	float heuristic(Vertex a, Vertex b);
-	void aStar(Graph graph, Vertex start, Vertex goal, map<Vertex, vector<Vertex>> adjList);
+	vector<Vertex> neighbors(Vertex id, vector<Vertex> vertices, int** adjList);
+	int heuristic(Vertex a, Vertex b);
+	void aStar(Graph graph, Vertex start, Vertex goal, vector<Vertex> vertices, int** adjList, vector<Vertex> path);
 };
 

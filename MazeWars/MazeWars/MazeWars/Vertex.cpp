@@ -11,3 +11,7 @@ Vertex::~Vertex()
 {
 }
 
+bool operator==(Vertex & lhs, Vertex & rhs)
+{
+	return (&lhs.x == &rhs.x && &lhs.y == &rhs.y);
+}

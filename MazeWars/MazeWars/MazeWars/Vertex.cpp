@@ -7,11 +7,15 @@ Vertex::Vertex()
 {
 }
 
+Vertex::Vertex(int xPos, int yPos, int heu, int cost)
+{
+	x = xPos;
+	y = yPos;
+	h = heu;
+	lowestCost = cost;
+}
+
 Vertex::~Vertex()
 {
 }
 
-bool operator==(Vertex & lhs, Vertex & rhs)
-{
-	return (&lhs.x == &rhs.x && &lhs.y == &rhs.y);
-}

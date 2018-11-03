@@ -8,8 +8,7 @@ public:
 	Vertex* parent;
 	int lowestCost;	
 	Vertex();
-	Vertex(int x, int y, int h, int lowestCost);
+	Vertex(int xPos, int yPos, int heu, int cost);
 	~Vertex();
-	friend bool operator== (Vertex & lhs, Vertex & rhs);
 };
 
